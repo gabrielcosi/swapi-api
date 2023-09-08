@@ -30,6 +30,10 @@ Before you begin, ensure you have met the following requirements:
 2. **Use the application** :
    With the local server running, you can now send requests to your endpoints using tools like [Postman](https://www.postman.com/).
 
+## Testing
+
+Simply run `npm test`
+
 ## Sample Endpoints
 
 ### Personajes
