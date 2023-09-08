@@ -1,0 +1,101 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: swapi-api
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/Planetas"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/Personajes"
+
+functions:
+  getPersonajeById:
+    handler: handler.getPersonajeById
+    events:
+      - http:
+          path: personajes/{id}
+          method: get
+  createPersonaje:
+    handler: handler.createPersonaje
+    events:
+      - http:
+          path: personajes
+          method: post
+  getPlanetaById:
+    handler: handler.getPlanetaById
+    events:
+      - http:
+          path: planetas/{id}
+          method: get
+  createPlaneta:
+    handler: handler.createPlaneta
+    events:
+      - http:
+          path: planetas
+          method: post
+
+resources:
+  Resources:
+    Planetas:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Planetas
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    Personajes:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Personajes
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+custom:
+  serverless-dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      migrate: true
+
+plugins:
+  - serverless-dynamodb
+  - serverless-offline
+  - serverless-plugin-typescript
